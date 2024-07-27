@@ -7,10 +7,10 @@
   
   <div style="display: flex; justify-content: space-around; margin: 2rem;">
     <div class="card" *ngFor="let image of imageList">
-      <img [src]="image.src" class="card-img-top" alt="Selected Image" style="width: 200px; height: 20vh;">
+      <img [src]="image.url" class="card-img-top" alt="Selected Image" style="width: 200px; height: 20vh;">
       <div class="card-body">
-        <h5>Create: {{ image.userName }}</h5>
-        <h5>Create Date: {{ image.createDate | date }}</h5>
+        <h5>Create: {{ image.user }}</h5>
+        <h5>Create Date: {{ image.dateCreated | date }}</h5>
         <h5>Description:</h5>
         <p class="card-text">{{ image.description }}</p>
         <div style="display: flex; flex-direction: row; justify-content: space-around;">

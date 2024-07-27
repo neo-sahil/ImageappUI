@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SafeUrl } from '@angular/platform-browser';
 import * as bootstrap from 'bootstrap';
+import { ApiService } from './services/api.service';
 
 interface Image {
   id: number;
-  src: SafeUrl;
-  userName: string;
-  createDate: Date;
+  url: SafeUrl;
+  user: string;
+  dateCreated: Date;
   description: string;
 }
 
@@ -22,7 +23,7 @@ export class AppComponent {
   nextId: number = 1; // For generating unique IDs
   editingImageId: number | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private apiservice: ApiService) {
     this.imageForm = this.fb.group({
       userName: ['', Validators.required],
       createDate: ['', Validators.required],
@@ -32,10 +33,20 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
-    this.imageList = [
-      { id: 1, src: '../assets//image/computer-world.jpg', userName: 'User 1', createDate: new Date(), description: 'Description 1' },
-      { id: 2, src: '../assets//image/social.png', userName: 'User 2', createDate: new Date(), description: 'Description 2' }
-    ];
+    this.apiservice.getImageList().subscribe(
+      (res) => {
+        this.imageList = res;
+        console.log('imgData=>', this.imageList);
+      },
+      (err) =>{
+        console.error('Error fetching data:', err);
+      }
+    );
+    
+    // this.imageList = [
+    //   { id: 1, src: '../assets//image/computer-world.jpg', userName: 'User 1', createDate: new Date(), description: 'Description 1' },
+    //   { id: 2, src: '../assets//image/social.png', userName: 'User 2', createDate: new Date(), description: 'Description 2' }
+    // ];
   }
 
   submitForm(): void {
@@ -43,9 +54,9 @@ export class AppComponent {
   
     const newImage: Image = {
       id: this.nextId++,
-      src: URL.createObjectURL(formValue.image),
-      userName: formValue.userName,
-      createDate: formValue.createDate,
+      url: URL.createObjectURL(formValue.image),
+      user: formValue.userName,
+      dateCreated: formValue.createDate,
       description: formValue.description
     };
   
@@ -83,8 +94,8 @@ export class AppComponent {
   editImage(image: Image): void {
     // Pre-fill the form with image data
     this.imageForm.patchValue({
-      userName: image.userName,
-      createDate: image.createDate,
+      userName: image.user,
+      createDate: image.dateCreated,
       description: image.description
       // Optionally allow changing the image: image: null
     });
